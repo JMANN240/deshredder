@@ -52,36 +52,36 @@ with Image.open('example_scaled.png') as img:
 	sleep(1)
 	convolution.save('convolution.png')
 
-	# with Image.open('convolution.png') as convolution:
-	# 	while True:
-	# 		shred_box = util.get_shred_box(convolution)
-	# 		if shred_box is None:
-	# 			break
-	# 		(shred, other) = util.extract_and_pass_back(convolution, shred_box)
-	# 		(img_shred, img_other) = util.extract_and_pass_back(img, shred_box)
-	# 		# shred.show()
-	# 		# sleep(0.1)
-	# 		# img_shred.show()
-	# 		# sleep(0.1)
-	# 		bottom = util.right_white_on_bottom(shred)
-	# 		right = util.bottom_white_on_right(shred)
-	# 		shred_rotation_radians = math.atan2(right[1] - bottom[1], right[0] - bottom[0])
-	# 		print(math.degrees(shred_rotation_radians))
-	# 		if (shred_rotation_radians) > math.pi / 4:
-	# 			rotated_shred = shred.rotate(math.degrees(shred_rotation_radians), expand=True)
-	# 			rotated_img_shred = img_shred.rotate(math.degrees(shred_rotation_radians), expand=True)
-	# 		else:
-	# 			rotated_shred = shred.rotate(math.degrees(shred_rotation_radians), expand=True)
-	# 			rotated_img_shred = img_shred.rotate(math.degrees(shred_rotation_radians), expand=True)
-	# 		# rotated_shred.show()
-	# 		# sleep(0.1)
-	# 		# rotated_img_shred.show()
-	# 		# sleep(0.1)
-	# 		shred_box = util.get_shred_box(rotated_shred)
-	# 		(cropped_rotated_shred, _) = util.extract_and_pass_back(rotated_shred, (shred_box[0]+2, shred_box[1]+2, shred_box[2]-2, shred_box[3]-2))
-	# 		(cropped_rotated_img_shred, _) = util.extract_and_pass_back(rotated_img_shred, (shred_box[0]+5, shred_box[1]+5, shred_box[2]-2, shred_box[3]-2))
-	# 		# cropped_rotated_shred.show()
-	# 		sleep(0.1)
-	# 		cropped_rotated_img_shred.show()
-	# 		convolution = other
-	# 		img = img_other
+	with Image.open('convolution.png') as convolution:
+		while True:
+			shred_box = util.get_shred_box(convolution)
+			if shred_box is None:
+				break
+			(shred, other) = util.extract_and_pass_back(convolution, shred_box)
+			(img_shred, img_other) = util.extract_and_pass_back(img, shred_box)
+			# shred.show()
+			# sleep(0.1)
+			# img_shred.show()
+			# sleep(0.1)
+			bottom = util.right_white_on_bottom(shred)
+			right = util.bottom_white_on_right(shred)
+			shred_rotation_radians = math.atan2(right[1] - bottom[1], right[0] - bottom[0])
+			print(math.degrees(shred_rotation_radians))
+			if (shred_rotation_radians) > math.pi / 4:
+				rotated_shred = shred.rotate(math.degrees(shred_rotation_radians), expand=True)
+				rotated_img_shred = img_shred.rotate(math.degrees(shred_rotation_radians), expand=True)
+			else:
+				rotated_shred = shred.rotate(math.degrees(shred_rotation_radians), expand=True)
+				rotated_img_shred = img_shred.rotate(math.degrees(shred_rotation_radians), expand=True)
+			# rotated_shred.show()
+			# sleep(0.1)
+			# rotated_img_shred.show()
+			# sleep(0.1)
+			shred_box = util.get_shred_box(rotated_shred)
+			(cropped_rotated_shred, _) = util.extract_and_pass_back(rotated_shred, (shred_box[0]+2, shred_box[1]+2, shred_box[2]-2, shred_box[3]-2))
+			(cropped_rotated_img_shred, _) = util.extract_and_pass_back(rotated_img_shred, (shred_box[0]+5, shred_box[1]+5, shred_box[2]-2, shred_box[3]-2))
+			# cropped_rotated_shred.show()
+			sleep(0.1)
+			cropped_rotated_img_shred.show()
+			convolution = other
+			img = img_other

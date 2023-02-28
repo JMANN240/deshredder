@@ -1,4 +1,5 @@
 import util
+from PIL import Image
 
 #
 # Represents a closed-loop of white pixels
@@ -11,6 +12,7 @@ class Contour:
 		self._fill = None
 		self._xs = None
 		self._ys = None
+		self._contour_image = None
 
 	# Recursively find the group of white pixels adjacent to coordinate, return a list of all coordinates
 	def _get_adjacent_whites(self, coordinate, list):
@@ -28,7 +30,7 @@ class Contour:
 
 			# If it satisfies these conditions, check its neighbors
 			if new_pixel and pixel_in_image and pixel_is_white:
-				self._get_adjacent_whites(self.image, neighbor_coordinate, list)
+				self._get_adjacent_whites(neighbor_coordinate, list)
 
 		return list
 	
@@ -96,3 +98,78 @@ class Contour:
 		if self._ys is None:
 			self._ys = sorted(tuple(set([pixel_coordinate[1] for pixel_coordinate in self.stroke()])))
 		return self._ys
+	
+	#
+	# Returns an image representing the contour
+	#
+	def contour_image(self):
+		if self._contour_image is None:
+			self._contour_image = Image.new('L', (self.image.width, self.image.height))
+			for pixel_coordinate in self.stroke():
+				self._contour_image.putpixel(pixel_coordinate, 255)
+		return self._contour_image
+	
+	#
+	# Return a cropped image representing the unrotated shred
+	#
+	def shred_image(self):
+		return self.contour_image().crop(self.bounding_box())
+		
+	
+	#
+	# Returns a bounding-box for the countour as (left, upper, right, lower)
+	#
+	def bounding_box(self):
+		left = self.first_white_from_left()[0]
+		upper = self.first_white_from_top()[1]
+		right = self.first_white_from_right()[0]+1
+		lower = self.first_white_from_bottom()[1]+1
+		return (left, upper, right, lower)
+
+	#
+	# Returns the coordinate of the first uppermost white pixel from the left
+	#
+	def first_white_from_left(self):
+		contour_image = self.contour_image()
+		for x in range(contour_image.width):
+			for y in range(contour_image.height):
+				value = contour_image.getpixel((x, y))
+				if value == 255:
+					return (x, y)
+		return None
+
+	#
+	# Returns the coordinate of the first lowermost white pixel from the right
+	#
+	def first_white_from_right(self):
+		contour_image = self.contour_image()
+		for x in range(contour_image.width-1, -1, -1):
+			for y in range(contour_image.height-1, -1, -1):
+				value = contour_image.getpixel((x, y))
+				if value == 255:
+					return (x, y)
+		return None
+
+	#
+	# Returns the coordinate of the first leftmost white pixel from the top
+	#
+	def first_white_from_top(self):
+		contour_image = self.contour_image()
+		for y in range(contour_image.height):
+			for x in range(contour_image.width):
+				value = contour_image.getpixel((x, y))
+				if value == 255:
+					return (x, y)
+		return None
+
+	#
+	# Returns the coordinate of the first rightmost white pixel from the bottom
+	#
+	def first_white_from_bottom(self):
+		contour_image = self.contour_image()
+		for y in range(contour_image.height-1, -1, -1):
+			for x in range(contour_image.width-1, -1, -1):
+				value = contour_image.getpixel((x, y))
+				if value == 255:
+					return (x, y)
+		return None

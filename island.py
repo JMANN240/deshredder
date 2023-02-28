@@ -48,6 +48,8 @@ def convolve_image(image, kernel, checkpoint_name=None):
 			convolution.save(checkpoint_name)
 	return convolution
 
+
+shred_contours = []
 with Image.open('convolution.png') as convolution:
 	# img = img.convert('L')
 	# convolution = convolve_image(img, kernels.basic(3), 'convolution.png')
@@ -60,9 +62,9 @@ with Image.open('convolution.png') as convolution:
 		if len(my_contour.stroke()) == 0:
 			break
 		elif len(my_contour.stroke()) >= 100:
-			island = Image.new('L', (convolution.width, convolution.height))
-			for pixel_coordinate in my_contour.stroke():
-				island.putpixel(pixel_coordinate, 255)
-			island.show()
+			shred_contours.append(my_contour)
 		for pixel_coordinate in my_contour.fill():
 			convolution.putpixel(pixel_coordinate, 0)
+
+for contour in shred_contours:
+	contour.shred_image().show()
