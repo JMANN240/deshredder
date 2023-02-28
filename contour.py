@@ -1,5 +1,6 @@
 import util
 from PIL import Image
+import math
 
 #
 # Represents a closed-loop of white pixels
@@ -26,11 +27,12 @@ class Contour:
 			# If we are going to check a neighbor it must satisfy the following
 			new_pixel = neighbor_coordinate not in list # Not already checked
 			pixel_in_image = util.coordinate_in_bounds(self.image, neighbor_coordinate) # Not out of image bounds
-			pixel_is_white = self.image.getpixel(neighbor_coordinate) == 255 # White
 
-			# If it satisfies these conditions, check its neighbors
-			if new_pixel and pixel_in_image and pixel_is_white:
-				self._get_adjacent_whites(neighbor_coordinate, list)
+			# If it satisfies these conditions, check to see if it is white
+			if new_pixel and pixel_in_image:
+				pixel_is_white = self.image.getpixel(neighbor_coordinate) == 255 # White?
+				if pixel_is_white:
+					self._get_adjacent_whites(neighbor_coordinate, list)
 
 		return list
 	
@@ -173,3 +175,18 @@ class Contour:
 				if value == 255:
 					return (x, y)
 		return None
+
+	#
+	# Returns the angle theta between the bottom edge and the bottom-right side of the shred
+	#
+	def theta(self):
+		# Get the points of the angle
+		bottom = self.first_white_from_bottom()
+		right = self.first_white_from_right()
+
+		# Find the leg lengths
+		dx = right[0]-bottom[0]
+		dy = bottom[1]-right[1] # Flip the order because of weird coordinate stuff
+
+		# Use atan2 to find the angle in radians
+		return math.atan2(dy, dx)

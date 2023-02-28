@@ -50,12 +50,12 @@ def convolve_image(image, kernel, checkpoint_name=None):
 
 
 shred_contours = []
-with Image.open('convolution.png') as convolution:
-	# img = img.convert('L')
-	# convolution = convolve_image(img, kernels.basic(3), 'convolution.png')
-	# # convolution = convolve_image(convolution, kernels.basic(5,5), 'convolution.png')
-	# sleep(1)
-	# convolution.save('convolution.png')
+with Image.open('example_ideal.png') as img:
+	img = img.convert('L')
+	convolution = convolve_image(img, kernels.basic(3), 'convolution.png')
+	# convolution = convolve_image(convolution, kernels.basic(5,5), 'convolution.png')
+	sleep(1)
+	convolution.save('convolution.png')
 
 	while True:
 		my_contour = contour.Contour(convolution)
@@ -66,5 +66,17 @@ with Image.open('convolution.png') as convolution:
 		for pixel_coordinate in my_contour.fill():
 			convolution.putpixel(pixel_coordinate, 0)
 
-for contour in shred_contours:
-	contour.shred_image().show()
+rotated_shred_contour_images = []
+for shred_contour in shred_contours:
+	if math.degrees(shred_contour.theta()) > 45:
+		rotated_shred_contour = shred_contour.shred_image().rotate(90-math.degrees(shred_contour.theta()), expand=True)
+	else:
+		rotated_shred_contour = shred_contour.shred_image().rotate(-math.degrees(shred_contour.theta()), expand=True)
+	rotated_shred_contour_images.append(rotated_shred_contour)
+
+rotated_shred_contours = []
+for rotated_shred_contour_image in rotated_shred_contour_images:
+	rotated_shred_contours.append(contour.Contour(rotated_shred_contour_image))
+
+for rotated_shred_contour in rotated_shred_contours:
+	rotated_shred_contour.shred_image().show()
