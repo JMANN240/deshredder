@@ -61,6 +61,8 @@ def last_white_after_first_white_from_left(image):
 				break
 		if not found_white_in_column and found_white_in_image:
 			return x-1
+	if found_white_in_column and found_white_in_image:
+		return image_width-1
 	return None
 
 def first_white_from_top(image):
@@ -84,6 +86,8 @@ def last_white_after_first_white_from_top(image):
 				found_white_in_row = True
 		if not found_white_in_row and found_white_in_image:
 			return y-1
+	if found_white_in_row and found_white_in_image:
+		return image_height-1
 	return None
 
 def extract_and_pass_back(image, box):
@@ -111,6 +115,8 @@ def right_white_on_bottom(image):
 			found_white = True
 		elif found_white:
 			return (x-1, last_row_y)
+	if found_white:
+		return (image.width-1, last_row_y)
 	return None
 
 def bottom_white_on_right(image):
@@ -121,6 +127,8 @@ def bottom_white_on_right(image):
 			found_white = True
 		elif found_white:
 			return (last_col_x, y-1)
+	if found_white:
+		return (last_col_x, image.height-1)
 	return None
 
 def first_all_white_from_left(image):
