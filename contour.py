@@ -23,11 +23,25 @@ class Contour:
 	
 	def stroke(self):
 		if self._stroke is None:
-			(first_x, first_y) = util.first_white_from_left(self.image)
+			first_coord = util.first_white_from_left(self.image)
+			if first_coord is None:
+				self._stroke = ()
+				return self._stroke
+			(first_x, first_y) = first_coord
 			self._stroke = get_adjacent_whites(self.image, first_x, first_y, [])
+		return self._stroke
 		
 	def fill(self):
-
+		if self._fill is None:
+			fill = []
+			for x in self.xs():
+				xys = [pixel_coordinate[1] for pixel_coordinate in self.stroke() if pixel_coordinate[0] == x]
+				min_y = min(xys)
+				max_y = max(xys)
+				for y in range(min_y, max_y+1):
+					fill.append((x, y))
+			self._fill = tuple(fill)
+		return self._fill
 
 	def xs(self):
 		if self._xs is None:

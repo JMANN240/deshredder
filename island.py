@@ -55,9 +55,14 @@ with Image.open('convolution.png') as convolution:
 	# sleep(1)
 	# convolution.save('convolution.png')
 
-	my_contour = contour.Contour(convolution)
-
-	island = Image.new('L', (convolution.width, convolution.height))
-	for pixel_coordinate in my_contour.whites:
-		island.putpixel(pixel_coordinate, 255)
-	island.show()
+	while True:
+		my_contour = contour.Contour(convolution)
+		if len(my_contour.stroke()) == 0:
+			break
+		elif len(my_contour.stroke()) >= 100:
+			island = Image.new('L', (convolution.width, convolution.height))
+			for pixel_coordinate in my_contour.stroke():
+				island.putpixel(pixel_coordinate, 255)
+			island.show()
+		for pixel_coordinate in my_contour.fill():
+			convolution.putpixel(pixel_coordinate, 0)
