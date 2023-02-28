@@ -50,7 +50,7 @@ def convolve_image(image, kernel, checkpoint_name=None):
 
 
 shred_contours = []
-with Image.open('example_ideal.png') as img:
+with Image.open('example_scaled.png') as img:
 	img = img.convert('L')
 	convolution = convolve_image(img, kernels.basic(3), 'convolution.png')
 	# convolution = convolve_image(convolution, kernels.basic(5,5), 'convolution.png')
@@ -67,16 +67,24 @@ with Image.open('example_ideal.png') as img:
 			convolution.putpixel(pixel_coordinate, 0)
 
 rotated_shred_contour_images = []
-for shred_contour in shred_contours:
+for shred_index, shred_contour in enumerate(shred_contours):
+	print(f"Processing shred {shred_index}")
+	best_rotated_shred_contour_image = None
+	best_rotated_shred_contour_area = math.inf
 	if math.degrees(shred_contour.theta()) > 45:
-		rotated_shred_contour = shred_contour.shred_image().rotate(90-math.degrees(shred_contour.theta()), expand=True)
+		starting_angle = 90-math.degrees(shred_contour.theta())
 	else:
-		rotated_shred_contour = shred_contour.shred_image().rotate(-math.degrees(shred_contour.theta()), expand=True)
-	rotated_shred_contour_images.append(rotated_shred_contour)
+		starting_angle = -math.degrees(shred_contour.theta())
+	for epsilon in range(-20,20):
+		epsilon /= 10
+		rotated_shred_contour_image = shred_contour.shred_image().rotate(starting_angle+epsilon, expand=True)
+		rotated_shred_contour = contour.Contour(rotated_shred_contour_image)
+		area = rotated_shred_contour.shred_image().width * rotated_shred_contour.shred_image().height
+		if area < best_rotated_shred_contour_area:
+			best_rotated_shred_contour_area = area
+			best_rotated_shred_contour_image = rotated_shred_contour_image
+	rotated_shred_contour_images.append(best_rotated_shred_contour_image)
 
-rotated_shred_contours = []
 for rotated_shred_contour_image in rotated_shred_contour_images:
-	rotated_shred_contours.append(contour.Contour(rotated_shred_contour_image))
-
-for rotated_shred_contour in rotated_shred_contours:
+	rotated_shred_contour = contour.Contour(rotated_shred_contour_image)
 	rotated_shred_contour.shred_image().show()
