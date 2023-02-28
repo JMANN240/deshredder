@@ -45,7 +45,7 @@ def first_white_from_left(image):
 		for y in range(image_height):
 			value = image.getpixel((x, y))
 			if value == 255:
-				return x
+				return (x, y)
 	return None
 
 def last_white_after_first_white_from_left(image):
@@ -60,9 +60,9 @@ def last_white_after_first_white_from_left(image):
 				found_white_in_column = True
 				break
 		if not found_white_in_column and found_white_in_image:
-			return x-1
+			return (x-1, y)
 	if found_white_in_column and found_white_in_image:
-		return image_width-1
+		return (image_width-1, image_height-1)
 	return None
 
 def first_white_from_top(image):
@@ -71,7 +71,7 @@ def first_white_from_top(image):
 		for x in range(image_width):
 			value = image.getpixel((x, y))
 			if value == 255:
-				return y
+				return (x, y)
 	return None
 
 def last_white_after_first_white_from_top(image):
@@ -87,7 +87,7 @@ def last_white_after_first_white_from_top(image):
 		if not found_white_in_row and found_white_in_image:
 			return y-1
 	if found_white_in_row and found_white_in_image:
-		return image_height-1
+		return (image_width-1, image_height-1)
 	return None
 
 def extract_and_pass_back(image, box):
@@ -158,3 +158,6 @@ def first_all_white_from_bottom(image):
 		if all(whites):
 			return y
 	return None
+
+def coordinate_in_bounds(image, coordinate):
+	return coordinate[0] >= 0 and coordinate[0] < image.width and coordinate[1] >= 0 and coordinate[1] < image.height

@@ -2,8 +2,11 @@ import logging
 import util
 from PIL import Image
 import kernels
-from time import sleep
+from time import sleep, time
 import math
+import sys
+import contour
+sys.setrecursionlimit(10000)
 
 #
 # Take a subimage and convolve it with the given kernel
@@ -45,9 +48,16 @@ def convolve_image(image, kernel, checkpoint_name=None):
 			convolution.save(checkpoint_name)
 	return convolution
 
-with Image.open('example_ideal.png') as img:
-	img = img.convert('L')
-	convolution = convolve_image(img, kernels.basic(3), 'convolution.png')
-	# convolution = convolve_image(convolution, kernels.basic(5,5), 'convolution.png')
-	sleep(1)
-	convolution.save('convolution.png')
+with Image.open('convolution.png') as convolution:
+	# img = img.convert('L')
+	# convolution = convolve_image(img, kernels.basic(3), 'convolution.png')
+	# # convolution = convolve_image(convolution, kernels.basic(5,5), 'convolution.png')
+	# sleep(1)
+	# convolution.save('convolution.png')
+
+	my_contour = contour.Contour(convolution)
+
+	island = Image.new('L', (convolution.width, convolution.height))
+	for pixel_coordinate in my_contour.whites:
+		island.putpixel(pixel_coordinate, 255)
+	island.show()
