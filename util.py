@@ -1,4 +1,8 @@
-def dialate_erode(image, test_color):
+#
+# Dialate or erode an image
+# For internal use only
+#
+def _dialate_erode(image, test_color):
 	dialated = image.copy()
 	(w, h) = dialated.size
 	changes = (
@@ -21,11 +25,19 @@ def dialate_erode(image, test_color):
 						pass
 	return dialated
 
-def dialate(image):
-	return dialate_erode(image, (255, 255, 255))
 
+#
+# Dialate an image
+#
+def dialate(image):
+	return _dialate_erode(image, (255, 255, 255))
+
+
+#
+# Erode an image
+#
 def erode(image):
-	return dialate_erode(image, (0, 0, 0))
+	return _dialate_erode(image, (0, 0, 0))
 
 def first_white_from_left(image):
 	(image_width, image_height) = image.size

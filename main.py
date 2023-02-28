@@ -5,6 +5,9 @@ import kernels
 from time import sleep
 import math
 
+#
+# Take a subimage and convolve it with the given kernel
+#
 def convolve_subimage(subimage, kernel):
 	(kernel_width, kernel_height) = (len(kernel[0]), len(kernel))
 	value = 0
@@ -19,6 +22,11 @@ def convolve_subimage(subimage, kernel):
 	kernel_sum_max = max(kernel_sum_positive, kernel_sum_negative)
 	return value / kernel_sum_max
 
+
+#
+# Convolve and image using a kernel
+# Generates another image where the pixel values are the values of the convolution of each subimage
+#
 def convolve_image(image, kernel, checkpoint_name=None):
 	(kernel_width, kernel_height) = (len(kernel[0]), len(kernel))
 	(image_width, image_height) = image.size
