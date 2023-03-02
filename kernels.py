@@ -29,3 +29,8 @@ v_lines = [
 	[1,1,0,-1,-1],
 	[1,1,0,-1,-1],
 ]
+
+#
+# Kernel for sample convolution
+#
+sample_kernel = [0.2, 0.2, 0.2, 0.2, 0.2]
