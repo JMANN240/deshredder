@@ -158,8 +158,7 @@ for shred_index, shred_contour in enumerate(shred_contours):
 	rotated_shred_contour_images.append(best_rotated_shred_contour_image)
 
 # For every corrected shred
-index = 0
-for rotated_shred_contour_image in rotated_shred_contour_images:
+for index, rotated_shred_contour_image in enumerate(rotated_shred_contour_images):
 	rotated_shred_contour = contour.Contour(rotated_shred_contour_image.filter(ImageFilter.MaxFilter(3)))
 	rotated_shred_contour.shred_image().save(f"../output/shred{index}.png")
 	index += 1
