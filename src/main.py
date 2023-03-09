@@ -161,5 +161,5 @@ for shred_index, shred_contour in enumerate(shred_contours):
 index = 0
 for rotated_shred_contour_image in rotated_shred_contour_images:
 	rotated_shred_contour = contour.Contour(rotated_shred_contour_image.filter(ImageFilter.MaxFilter(3)))
-	rotated_shred_contour.shred_image().save("../output/shred" + str(index) + ".png")
+	rotated_shred_contour.shred_image().save(f"../output/shred{index}.png")
 	index += 1
