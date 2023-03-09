@@ -5,6 +5,7 @@ import kernels
 from time import sleep, time
 import math
 import sys
+import os
 import contour
 sys.setrecursionlimit(10000)
 
@@ -86,10 +87,24 @@ def convolve_image_saturation(image, kernel, checkpoint_name=None):
 			convolution.save(checkpoint_name)
 	return convolution
 
+# Preprocess commandline args
+# Expected input: one optional argument, which is a list of case-insensitive switches
+reuseIntermediaries = False
+
+if len(sys.argv) == 2:
+	switches = sys.argv[1][1:].lower()
+
+	for switch in switches:
+		match switch:
+			case 'r':
+				reuseIntermediaries = True
+
 # Take an input image with all shreds to be computed, and create an edge map with convolution
-with Image.open('../input/example_ideal_saturation.png') as img:
-	convolution = convolve_image_saturation(img, kernels.basic(7), 'convolution.png')
-	convolution.save('../intermediary/convolution.png')
+# This convolution is reusable, to save time
+if not reuseIntermediaries or not os.path.isfile('../input/example_ideal_saturation.png'):
+	with Image.open('../input/example_ideal_saturation.png') as img:
+		convolution = convolve_image_saturation(img, kernels.basic(7), 'convolution.png')
+		convolution.save('../intermediary/convolution.png')
 
 # A list to hold all the shreds we find
 shred_contours = []
