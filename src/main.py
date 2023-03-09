@@ -87,15 +87,15 @@ def convolve_image_saturation(image, kernel, checkpoint_name=None):
 	return convolution
 
 # Take an input image with all shreds to be computed, and create an edge map with convolution
-with Image.open('example_ideal_saturation.png') as img:
+with Image.open('../input/example_ideal_saturation.png') as img:
 	convolution = convolve_image_saturation(img, kernels.basic(7), 'convolution.png')
-	convolution.save('convolution.png')
+	convolution.save('../intermediary/convolution.png')
 
 # A list to hold all the shreds we find
 shred_contours = []
 
 # Open the convolution image
-with Image.open('convolution.png') as convolution:
+with Image.open('../intermediary/convolution.png') as convolution:
 
 	# Until we've found every shred in the image:
 	while True:
@@ -146,5 +146,5 @@ for shred_index, shred_contour in enumerate(shred_contours):
 index = 0
 for rotated_shred_contour_image in rotated_shred_contour_images:
 	rotated_shred_contour = contour.Contour(rotated_shred_contour_image.filter(ImageFilter.MaxFilter(3)))
-	rotated_shred_contour.shred_image().save("shred" + str(index) + ".png")
+	rotated_shred_contour.shred_image().save("../output/shred" + str(index) + ".png")
 	index += 1
