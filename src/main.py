@@ -12,12 +12,12 @@ sys.setrecursionlimit(10000)
 
 # Preprocess commandline args
 @click.command()
-@click.option("--start", default=1, help="Which step to begin from")
-@click.option("--end", default=2, help="Which step to end on")
-@click.option("--input", prompt="Enter input file", help="Filename of input")
-@click.option("--output", prompt="Enter output file name", help="Filename of output")
+@click.option("-s", "--start", default=1, help="Which step to begin from")
+@click.option("-e", "--end", default=4, help="Which step to end on")
+@click.option("-k", "--kernel-size", default=7, help="Size of convolution kernel")
+@click.argument("input-file", type=str)
 
-def deshred(start, end, input, output):
+def deshred(start, end, input):
 	# Take an input image with all shreds to be computed, and create an edge map with convolution
 	with Image.open('../examples/example_ideal_saturation.png') as img:
 		convolution = util.convolve_image(img, kernels.basic(7), 'convolution.png')
