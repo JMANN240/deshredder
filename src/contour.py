@@ -187,6 +187,22 @@ class Contour:
 		# Find the leg lengths
 		dx = right[0]-bottom[0]
 		dy = bottom[1]-right[1] # Flip the order because of weird coordinate stuff
+	
+		# Bottom right angle
+		bottom_right_angle = math.atan2(dy, dx)
+		if bottom_right_angle < math.pi / 4:
+			top = self.first_white_from_top()
+
+			# Find the new leg lengths
+			dx = right[1]-top[1]
+			dy = right[0]-top[0]
+
+			# Top right angle
+			top_right_angle = math.atan2(dy, dx)
+			theta = top_right_angle
+		else:
+			theta = bottom_right_angle
+
 
 		# Use atan2 to find the angle in radians
-		return math.atan2(dy, dx)
+		return theta
