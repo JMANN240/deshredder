@@ -25,7 +25,7 @@ if len(sys.argv) == 2:
 # This convolution is reusable, to save time
 if not reuseIntermediaries or not os.path.isfile('../input/example_ideal_saturation.png'):
 	with Image.open('../input/example_ideal_saturation.png') as img:
-		convolution = convolve_image_saturation(img, kernels.basic(7), 'convolution.png')
+		convolution = util.convolve_image(img, kernels.basic(7), 'convolution.png')
 		convolution.save('../intermediary/convolution.png')
 
 # A list to hold all the shreds we find
