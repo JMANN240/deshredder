@@ -1,4 +1,6 @@
 from PIL import Image
+from contour import Contour
+import math
 
 #
 # Take a subimage and convolve it with the given kernel with respect to saturation
@@ -36,6 +38,56 @@ def convolve_image(image, kernel, checkpoint_name=None):
 		if checkpoint_name is not None:
 			convolution.save(checkpoint_name)
 	return convolution
+
+#
+# Get all of the shred images in a convolution
+#
+def get_convolution_contours(convolution, size_threshold=100):
+	# A list to hold the contours
+	shred_contours = []
+
+	# Until we've found every shred in the image:
+	while True:
+		# Instantiate a contour object with the current image
+		my_contour = Contour(convolution)
+
+		# If we can't find any more edges, we've grabbed every shred
+		if len(my_contour.stroke()) == 0:
+			break
+
+		# If we've found an edge (that's more than just a small blob), we'll make
+		# note of it
+		elif len(my_contour.stroke()) >= size_threshold:
+			shred_contours.append(my_contour)
+
+		# Fill in the edge we just got with black
+		for pixel_coordinate in my_contour.fill():
+			convolution.putpixel(pixel_coordinate, 0)
+	
+	return shred_contours
+
+#
+# Figure out how much to rotate the contours
+#
+def get_contour_rotations(contour, try_thetas):
+	best_area = math.inf
+
+	# We'll rotate the shred towards whichever orientation it's closest to
+	if math.degrees(contour.theta()) > 45:
+		starting_angle = 90-math.degrees(contour.theta())
+	else:
+		starting_angle = -math.degrees(contour.theta())
+	best_theta = starting_angle
+
+	# Try some thetas near the "best" theta
+	for try_theta in try_thetas:
+		rotated_shred_contour_image = contour.shred_image().rotate(starting_angle+try_theta, expand=True)
+		rotated_shred_contour = Contour(rotated_shred_contour_image)
+		area = rotated_shred_contour.shred_image().width * rotated_shred_contour.shred_image().height
+		if area < best_area:
+			best_area = area
+
+	return best_theta
 
 #
 # Dialate or erode an image
@@ -77,6 +129,12 @@ def dialate(image):
 #
 def erode(image):
 	return _dialate_erode(image, (0, 0, 0))
+
+def expand_bounding_box(bounding_box, n):
+	return (bounding_box[0]-n, bounding_box[1]-n, bounding_box[2]+n, bounding_box[3]+n)
+
+def offset_bounding_box(bounding_box, x, y):
+	return (bounding_box[0]+x, bounding_box[1]+y, bounding_box[2]+x, bounding_box[3]+y)
 
 def first_white_from_left(image):
 	(image_width, image_height) = image.size
