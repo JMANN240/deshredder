@@ -1,3 +1,42 @@
+from PIL import Image
+
+#
+# Take a subimage and convolve it with the given kernel with respect to saturation
+#
+def convolve_subimage(subimage, kernel):
+	(kernel_width, kernel_height) = (len(kernel[0]), len(kernel))
+	value = 0
+	test_pixel = subimage.getpixel(((kernel_width-1)/2, (kernel_height-1)/2))[1] / 255
+	for x in range(kernel_width):
+		for y in range(kernel_height):
+			current_pixel = subimage.getpixel((x, y))[1] / 255
+			value += abs(test_pixel-current_pixel) * kernel[y][x]
+	kernel_sum_positive = sum([sum([v for v in row if v > 0]) for row in kernel])
+	kernel_sum_negative = sum([sum([v for v in row if v < 0]) for row in kernel])
+	kernel_sum_max = max(kernel_sum_positive, kernel_sum_negative)
+	return value / kernel_sum_max
+
+#
+# Convolve an image by saturation using a kernel
+# Generates another image where the pixel values are the values of the convolution of each subimage
+#
+def convolve_image(image, kernel, checkpoint_name=None):
+	image = image.convert('HSV')
+	convolution = Image.new('L', (image.width, image.height), color=0)
+	(kernel_width, kernel_height) = (len(kernel[0]), len(kernel))
+	kernel_edge_width = int((kernel_width-1)/2)
+	kernel_edge_height = int((kernel_height-1)/2)
+	for x in range(kernel_edge_width, image.width-kernel_edge_width-2):
+		for y in range(kernel_edge_height, image.height-kernel_edge_height-2):
+			subimage = image.crop((x, y, x+kernel_width, y+kernel_height))
+			convolved_value = convolve_subimage(subimage, kernel)
+			convolved_value = round(convolved_value*255)
+			convolved_value = 255 if convolved_value > 64 else 0
+			convolution.putpixel((x, y), convolved_value)
+		if checkpoint_name is not None:
+			convolution.save(checkpoint_name)
+	return convolution
+
 #
 # Dialate or erode an image
 # For internal use only
