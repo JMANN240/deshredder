@@ -258,3 +258,30 @@ def first_all_white_from_bottom(image):
 
 def coordinate_in_bounds(image, coordinate):
 	return coordinate[0] >= 0 and coordinate[0] < image.width and coordinate[1] >= 0 and coordinate[1] < image.height
+
+def squashed_list(list):
+	current_item = None
+	new_list = []
+	for item in list:
+		if item != current_item:
+			new_list.append(item)
+		current_item = item
+	return new_list
+
+def first_sat_unsat_sat_from_top(image):
+	image = image.convert('HSV')
+	for y in range(image.height):
+		saturateds = [image.getpixel((x,y))[1] >= 128 for x in range(image.width)]
+		squashed_saturateds = squashed_list(saturateds)
+		if squashed_saturateds == [True, False, True]:
+			return y
+	return None
+
+def first_sat_unsat_sat_from_bottom(image):
+	image = image.convert('HSV')
+	for y in range(image.height-1, -1, -1):
+		saturateds = [image.getpixel((x,y))[1] >= 128 for x in range(image.width)]
+		squashed_saturateds = squashed_list(saturateds)
+		if squashed_saturateds == [True, False, True]:
+			return y
+	return None
