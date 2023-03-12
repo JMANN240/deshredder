@@ -9,7 +9,7 @@ import os
 import contour
 import click
 import steps
-from combineshreds import Shred
+# from combineshreds import Shred
 sys.setrecursionlimit(10000)
 logging.basicConfig(level=logging.DEBUG)
 
