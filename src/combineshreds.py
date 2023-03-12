@@ -74,6 +74,10 @@ class Shred:
 			elif left or right:
 				checks += 1
 		
+		# Prevent division by 0
+		if checks == 0:
+			checks += 1
+		
 		print(matches / checks)
 		return (matches / checks) >= confidence_interval
 
