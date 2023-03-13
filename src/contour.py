@@ -9,6 +9,7 @@ import math
 class Contour:
 	def __init__(self, image):
 		self.image = image
+		self._image_pixels = image.load()
 		self._pixels = None
 		self._xs = None
 		self._ys = None
@@ -38,7 +39,7 @@ class Contour:
 
 					# If it satisfies these conditions, check to see if it is white
 					if new_pixel and pixel_in_image:
-						pixel_is_white = self.image.getpixel(neighbor_coordinate) == 255 # White?
+						pixel_is_white = self._image_pixels[neighbor_coordinate[0], neighbor_coordinate[1]] == 255 # White?
 						if pixel_is_white:
 							new_search_set.add(neighbor_coordinate)
 			
@@ -119,9 +120,10 @@ class Contour:
 	#
 	def first_white_from_left(self):
 		contour_image = self.contour_image()
+		contour_image_pixels = contour_image.load()
 		for x in range(contour_image.width):
 			for y in range(contour_image.height):
-				value = contour_image.getpixel((x, y))
+				value = contour_image_pixels[x, y]
 				if value == 255:
 					return (x, y)
 		return None
@@ -131,9 +133,10 @@ class Contour:
 	#
 	def first_white_from_right(self):
 		contour_image = self.contour_image()
+		contour_image_pixels = contour_image.load()
 		for x in range(contour_image.width-1, -1, -1):
 			for y in range(contour_image.height-1, -1, -1):
-				value = contour_image.getpixel((x, y))
+				value = contour_image_pixels[x, y]
 				if value == 255:
 					return (x, y)
 		return None
@@ -143,9 +146,10 @@ class Contour:
 	#
 	def first_white_from_top(self):
 		contour_image = self.contour_image()
+		contour_image_pixels = contour_image.load()
 		for y in range(contour_image.height):
 			for x in range(contour_image.width):
-				value = contour_image.getpixel((x, y))
+				value = contour_image_pixels[x, y]
 				if value == 255:
 					return (x, y)
 		return None
@@ -155,9 +159,10 @@ class Contour:
 	#
 	def first_rightmost_white_from_top(self):
 		contour_image = self.contour_image()
+		contour_image_pixels = contour_image.load()
 		for y in range(contour_image.height):
 			for x in range(contour_image.width-1, -1, -1):
-				value = contour_image.getpixel((x, y))
+				value = contour_image_pixels[x, y]
 				if value == 255:
 					return (x, y)
 		return None
@@ -167,9 +172,10 @@ class Contour:
 	#
 	def first_white_from_bottom(self):
 		contour_image = self.contour_image()
+		contour_image_pixels = contour_image.load()
 		for y in range(contour_image.height-1, -1, -1):
 			for x in range(contour_image.width-1, -1, -1):
-				value = contour_image.getpixel((x, y))
+				value = contour_image_pixels[x, y]
 				if value == 255:
 					return (x, y)
 		return None

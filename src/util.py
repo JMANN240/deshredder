@@ -155,21 +155,23 @@ def offset_bounding_box(bounding_box, x, y):
 	return (bounding_box[0]+x, bounding_box[1]+y, bounding_box[2]+x, bounding_box[3]+y)
 
 def first_white_from_left(image):
+	image_pixels = image.load()
 	(image_width, image_height) = image.size
 	for x in range(image_width):
 		for y in range(image_height):
-			value = image.getpixel((x, y))
+			value = image_pixels[x, y]
 			if value == 255:
 				return (x, y)
 	return None
 
 def last_white_after_first_white_from_left(image):
+	image_pixels = image.load()
 	(image_width, image_height) = image.size
 	found_white_in_image = False
 	for x in range(image_width):
 		found_white_in_column = False
 		for y in range(image_height):
-			value = image.getpixel((x, y))
+			value = image_pixels[x, y]
 			if value == 255:
 				found_white_in_image = True
 				found_white_in_column = True
@@ -181,21 +183,23 @@ def last_white_after_first_white_from_left(image):
 	return None
 
 def first_white_from_top(image):
+	image_pixels = image.load()
 	(image_width, image_height) = image.size
 	for y in range(image_height):
 		for x in range(image_width):
-			value = image.getpixel((x, y))
+			value = image_pixels[x, y]
 			if value == 255:
 				return (x, y)
 	return None
 
 def last_white_after_first_white_from_top(image):
+	image_pixels = image.load()
 	(image_width, image_height) = image.size
 	found_white_in_image = False
 	for y in range(image_height):
 		found_white_in_row = False
 		for x in range(image_width):
-			value = image.getpixel((x, y))
+			value = image_pixels[x, y]
 			if value == 255:
 				found_white_in_image = True
 				found_white_in_row = True
@@ -223,10 +227,11 @@ def get_shred_box(image):
 	return (left, upper, right, lower)
 
 def right_white_on_bottom(image):
+	image_pixels = image.load()
 	last_row_y = image.height-1
 	found_white = False
 	for x in range(image.width):
-		if image.getpixel((x, last_row_y)) == 255:
+		if image_pixels[x, last_row_y] == 255:
 			found_white = True
 		elif found_white:
 			return (x-1, last_row_y)
@@ -235,10 +240,11 @@ def right_white_on_bottom(image):
 	return None
 
 def bottom_white_on_right(image):
+	image_pixels = image.load()
 	last_col_x = image.width-1
 	found_white = False
 	for y in range(image.height):
-		if image.getpixel((last_col_x, y)) == 255:
+		if image_pixels[last_col_x, y] == 255:
 			found_white = True
 		elif found_white:
 			return (last_col_x, y-1)
@@ -247,29 +253,33 @@ def bottom_white_on_right(image):
 	return None
 
 def first_all_white_from_left(image):
+	image_pixels = image.load()
 	for x in range(image.width):
-		whites = [image.getpixel((x,y)) == 255 for y in range(image.height)]
+		whites = [image_pixels[x,y] == 255 for y in range(image.height)]
 		if all(whites):
 			return x
 	return None
 
 def first_all_white_from_right(image):
+	image_pixels = image.load()
 	for x in range(image.width-1, -1, -1):
-		whites = [image.getpixel((x,y)) == 255 for y in range(image.height)]
+		whites = [image_pixels[x,y] == 255 for y in range(image.height)]
 		if all(whites):
 			return x
 	return None
 
 def first_all_white_from_top(image):
+	image_pixels = image.load()
 	for y in range(image.height):
-		whites = [image.getpixel((x,y)) == 255 for x in range(image.width)]
+		whites = [image_pixels[x,y] == 255 for x in range(image.width)]
 		if all(whites):
 			return y
 	return None
 
 def first_all_white_from_bottom(image):
+	image_pixels = image.load()
 	for y in range(image.height-1, -1, -1):
-		whites = [image.getpixel((x,y)) == 255 for x in range(image.width)]
+		whites = [image_pixels[x,y] == 255 for x in range(image.width)]
 		if all(whites):
 			return y
 	return None
@@ -287,18 +297,20 @@ def squashed_list(list):
 	return new_list
 
 def first_sat_unsat_sat_from_top(image):
+	image_pixels = image.load()
 	image = image.convert('HSV')
 	for y in range(image.height):
-		saturateds = [image.getpixel((x,y))[1] >= 128 for x in range(image.width)]
+		saturateds = [image_pixels[x,y][1] >= 128 for x in range(image.width)]
 		squashed_saturateds = squashed_list(saturateds)
 		if squashed_saturateds == [True, False, True]:
 			return y
 	return None
 
 def first_sat_unsat_sat_from_bottom(image):
+	image_pixels = image.load()
 	image = image.convert('HSV')
 	for y in range(image.height-1, -1, -1):
-		saturateds = [image.getpixel((x,y))[1] >= 128 for x in range(image.width)]
+		saturateds = [image_pixels[x,y][1] >= 128 for x in range(image.width)]
 		squashed_saturateds = squashed_list(saturateds)
 		if squashed_saturateds == [True, False, True]:
 			return y
