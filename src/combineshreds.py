@@ -64,7 +64,7 @@ class Shred:
 	# Returns a boolean indicating of the right side of this shred aligns with
 	# the left side of the provided shred. The "closeness" of the match can be
 	# supplied with the confidence interval argument
-	def aligns_left_of(self, other_shred, confidence_interval):
+	def aligns_left_of(self, other_shred, confidence):
 		FUZZY_RANGE = 10 # Fuzzy comparision
 		matches = 0
 		checks = 0
@@ -84,7 +84,7 @@ class Shred:
 			checks += 1
 
 		print(f"Confidence: {round(matches / checks, 2)}")
-		return (matches / checks) >= confidence_interval
+		return (matches / checks) >= confidence
 
 	def attach_left_of(self, other_shred):
 		# Although the images can be different widths, their height must
