@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.DEBUG)
 @click.option("-e", "--end", default=4, help="Which step to end on")
 @click.option("-k", "--kernel-size", default=7, help="Size of convolution kernel")
 @click.argument("input-file", type=str)
+@util.timeit
 def deshred(start, end, kernel_size, input_file):
 	step = start
 	_, input_name = os.path.split(input_file)

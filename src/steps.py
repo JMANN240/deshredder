@@ -6,6 +6,7 @@ import logging
 #
 # Take in an image, return its saturation convolution
 #
+@util.timeit
 def step_1(image):
     masked_image = util.mask_image(image)
     logging.debug("Masked image")
@@ -14,6 +15,7 @@ def step_1(image):
 #
 # Take an image and its convolution and return the shred images
 #
+@util.timeit
 def step_2(image, convolution):
     contours = util.get_convolution_contours(convolution)
     logging.debug("Got contours")

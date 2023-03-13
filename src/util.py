@@ -2,6 +2,19 @@ from PIL import Image
 from contour import Contour
 import math
 import time
+import logging
+
+#
+# Decorator function for timing other functions
+#
+def timeit(func):
+    def timed(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        logging.debug(f"Function '{func.__name__}' ran in {round((end-start)*1000,2)} ms")
+        return result
+    return timed
 
 #
 # Take a subimage and convolve it with the given kernel with respect to saturation
