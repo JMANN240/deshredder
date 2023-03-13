@@ -22,16 +22,16 @@ logging.basicConfig(level=logging.DEBUG)
 def deshred(start, end, kernel_size, input_file):
 	step = start
 	_, input_name = os.path.split(input_file)
-	convolution_path = f"intermediaries/convolution_{input_name}"
+	mask_path = f"intermediaries/mask_{input_name}"
 	shred_path = lambda index: f"intermediaries/shred_{index}_{input_name}"
 	image = Image.open(input_file)
 	if step == 0:
-		convolution = steps.step_1(image, kernel_size)
-		convolution.save(convolution_path)
+		mask = steps.step_1(image)
+		mask.save(mask_path)
 		step += 1
-	convolution = Image.open(convolution_path)
+	mask = Image.open(mask_path)
 	if step == 1:
-		shreds = steps.step_2(image, convolution)
+		shreds = steps.step_2(image, mask)
 		for index, shred in enumerate(shreds):
 			shred.save(shred_path(index))
 		step += 1

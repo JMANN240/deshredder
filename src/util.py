@@ -40,6 +40,19 @@ def convolve_image(image, kernel, checkpoint_name=None):
 	return convolution
 
 #
+# Mask an image by saturation
+# Generates another image where the pixel values are the thresholded saturation of the image
+#
+def mask_image(image, threshold=128):
+	image = image.convert('HSV')
+	mask = Image.new('L', (image.width, image.height), color=0)
+	for x in range(image.width):
+		for y in range(image.height):
+			if image.getpixel((x,y))[1] < threshold:
+				mask.putpixel((x,y), 255)
+	return mask
+
+#
 # Get all of the shred images in a convolution
 #
 def get_convolution_contours(convolution, size_threshold=100):
@@ -52,16 +65,16 @@ def get_convolution_contours(convolution, size_threshold=100):
 		my_contour = Contour(convolution)
 
 		# If we can't find any more edges, we've grabbed every shred
-		if len(my_contour.stroke()) == 0:
+		if len(my_contour.pixels()) == 0:
 			break
 
 		# If we've found an edge (that's more than just a small blob), we'll make
 		# note of it
-		elif len(my_contour.stroke()) >= size_threshold:
+		elif len(my_contour.pixels()) >= size_threshold:
 			shred_contours.append(my_contour)
 
 		# Fill in the edge we just got with black
-		for pixel_coordinate in my_contour.fill():
+		for pixel_coordinate in my_contour.pixels():
 			convolution.putpixel(pixel_coordinate, 0)
 	
 	return shred_contours
