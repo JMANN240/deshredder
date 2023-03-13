@@ -29,12 +29,16 @@ def deshred(start, end, kernel_size, input_file):
 		mask = steps.step_1(image)
 		mask.save(mask_path)
 		step += 1
+	if step == end:
+		return
 	mask = Image.open(mask_path)
 	if step == 1:
 		shreds = steps.step_2(image, mask)
 		for index, shred in enumerate(shreds):
 			shred.save(shred_path(index))
 		step += 1
+	if step == end:
+		return
 
 if __name__ == '__main__':
 	deshred()

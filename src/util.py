@@ -1,6 +1,7 @@
 from PIL import Image
 from contour import Contour
 import math
+import time
 
 #
 # Take a subimage and convolve it with the given kernel with respect to saturation
@@ -44,12 +45,16 @@ def convolve_image(image, kernel, checkpoint_name=None):
 # Generates another image where the pixel values are the thresholded saturation of the image
 #
 def mask_image(image, threshold=128):
+	start = time.time()
 	image = image.convert('HSV')
 	mask = Image.new('L', (image.width, image.height), color=0)
+	image_pixels = image.load()
+	mask_pixels = mask.load()
 	for x in range(image.width):
 		for y in range(image.height):
-			if image.getpixel((x,y))[1] < threshold:
-				mask.putpixel((x,y), 255)
+			if image_pixels[x,y][1] < threshold:
+				mask_pixels[x,y] = 255
+	print(time.time()-start)
 	return mask
 
 #
