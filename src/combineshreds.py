@@ -92,7 +92,7 @@ class Shred:
 		if self.image.height > other_shred.image.height:
 			self.image.resize((self.image.width, other_shred.image.height))
 		elif other_shred.image.height > self.image.height:
-			other_shred.resize((other_shred.width, self.image.height))
+			other_shred.image.resize((other_shred.image.width, self.image.height))
 
 		# Create a new image to hold the combined images
 		combined_image = Image.new("RGB", (self.image.width + other_shred.image.width, self.image.height), "white")
