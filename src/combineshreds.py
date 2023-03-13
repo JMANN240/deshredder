@@ -122,8 +122,8 @@ if __name__ == '__main__':
 
 	# Get all shreds (adjust as necessary)
 	shreds = []
-	for i in range(4):
-		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_example_saturation.png")))
+	for i in range(5):
+		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_example_ideal_saturation.png")))
 
 	lookingForMatches = True
 	while lookingForMatches:
