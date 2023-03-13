@@ -54,7 +54,6 @@ def mask_image(image, threshold=128):
 		for y in range(image.height):
 			if image_pixels[x,y][1] < threshold:
 				mask_pixels[x,y] = 255
-	print(time.time()-start)
 	return mask
 
 #
