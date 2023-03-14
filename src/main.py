@@ -29,6 +29,8 @@ def deshred(start, end, kernel_size, input_file):
 	if step == 0:
 		mask = steps.step_1(image)
 		mask.save(mask_path)
+		sat_val_mask = util.mask_image_saturation_value(image)
+		sat_val_mask.save(f"intermediaries/sat_val_mask_{input_name}")
 		step += 1
 	if step == end:
 		return

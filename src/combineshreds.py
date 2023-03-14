@@ -1,5 +1,7 @@
 from PIL import Image
 import sys
+import util
+from time import sleep
 
 #
 # Represents a shred of paper
@@ -11,11 +13,19 @@ class Shred:
 		# Initialize members
 		self.image = image
 		# Samples are array of bools. True if "white enough", false otherwise
-		self._samples = 200
+		self._samples = 800
 		self._left_sample = []
 		self._right_sample = []
 		self._search_depth = 3	# How many pixels should we look into the sample?
-		
+		self._black_threshold = 3	# How many of them need to be black for it to be counted as black?
+
+		self._calculate_samples()
+
+	def _calculate_samples(self):
+		# Reset the samples
+		self._left_sample = []
+		self._right_sample = []
+
 		# Useful variables
 		SATURATION_THRESHOLD = 128 # S value for saturated vs not
 		WHITE_THRESHOLD = 192 # How much value for a pixel to be whites?
@@ -37,12 +47,12 @@ class Shred:
 				if x > self.image.width / 2:
 					break
 			# Look a few pixels in and check for a blackish one
+			blacks = 0
 			for xDepth in range(self._search_depth):
 				if pixel[x+xDepth, y][2] < WHITE_THRESHOLD:
-					self._left_sample.append(True)
-					break
-			else:
-				self._left_sample.append(False)
+					blacks += 1
+			self._left_sample.append(blacks >= self._black_threshold)
+				
 
 			# Get right sample
 			# Look right until we find an unsaturated pixel
@@ -53,12 +63,11 @@ class Shred:
 				if x < self.image.width / 2:
 					break
 			# Look a few pixels in and check for a blackish one
+			blacks = 0
 			for xDepth in range(self._search_depth):
 				if pixel[x-xDepth, y][2] < WHITE_THRESHOLD:
-					self._right_sample.append(True)
-					break
-			else:
-				self._right_sample.append(False)
+					blacks += 1
+			self._right_sample.append(blacks >= self._black_threshold)
 
 		# Convert back to RGB
 		self.image = self.image.convert("RGB")
@@ -66,17 +75,17 @@ class Shred:
 	# Returns a boolean indicating of the right side of this shred aligns with
 	# the left side of the provided shred. The "closeness" of the match can be
 	def aligns_left_of(self, other_shred):
-		FUZZY_RANGE = 0 # Fuzzy comparision
 		matches = 0
+		checks = 0
 
-		for index in range(self._samples):
-			for fuzzy in range(-FUZZY_RANGE, FUZZY_RANGE + 1):
-				if self._right_sample[index] and other_shred._left_sample[index + fuzzy]:
+		for right, left in zip(self._right_sample, other_shred._left_sample):
+			if left or right:
+				checks += 1
+				if left and right:
 					matches += 1
-					break
 
-		print(f"Confidence: {round(matches / self._samples, 2)}")
-		return (matches / self._samples)
+		print(f"Confidence: {round(matches / checks, 2)}")
+		return (matches / checks)
 
 	def attach_left_of(self, other_shred):
 		# Although the images can be different widths, their height must
@@ -94,6 +103,7 @@ class Shred:
 
 		# Save this as the new image for this object
 		self.image = combined_image
+		self._calculate_samples()
 
 #
 # Run tests
@@ -122,8 +132,8 @@ if __name__ == '__main__':
 
 	# Get all shreds (adjust as necessary)
 	shreds = []
-	for i in range(5):
-		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_example_ideal_saturation.png")))
+	for i in range(8):
+		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_example_8_shreds.png")))
 
 	lookingForMatches = True
 	while lookingForMatches:

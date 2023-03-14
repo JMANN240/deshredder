@@ -70,6 +70,25 @@ def mask_image(image, threshold=128):
 	return mask
 
 #
+# Mask an image by value
+# Generates another image where the pixel values are the thresholded value of the image
+#
+def mask_image_saturation_value(image, saturation_threshold=128, value_threshold=196):
+	start = time.time()
+	image = image.convert('HSV')
+	mask = Image.new('L', (image.width, image.height), color=0)
+	image_pixels = image.load()
+	mask_pixels = mask.load()
+	for x in range(image.width):
+		for y in range(image.height):
+			if image_pixels[x,y][1] < saturation_threshold:
+				if image_pixels[x,y][2] < value_threshold:
+					mask_pixels[x,y] = 128
+				else:
+					mask_pixels[x,y] = 255
+	return mask
+
+#
 # Get all of the shred images in a convolution
 #
 def get_convolution_contours(convolution, size_threshold=100):
