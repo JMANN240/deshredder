@@ -25,6 +25,7 @@ def deshred(start, end, kernel_size, input_file):
 	_, input_name = os.path.split(input_file)
 	mask_path = f"intermediaries/mask_{input_name}"
 	shred_path = lambda index: f"intermediaries/shred_{index}_{input_name}"
+	shred_sat_val_mask_path = lambda index: f"intermediaries/shred_{index}_sat_val_mask_{input_name}"
 	image = Image.open(input_file)
 	if step == 0:
 		mask = steps.step_1(image)
@@ -39,6 +40,7 @@ def deshred(start, end, kernel_size, input_file):
 		shreds = steps.step_2(image, mask)
 		for index, shred in enumerate(shreds):
 			shred.save(shred_path(index))
+			util.mask_image_saturation_value(shred).save(shred_sat_val_mask_path(index))
 		step += 1
 	if step == end:
 		return

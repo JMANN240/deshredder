@@ -9,7 +9,7 @@ from time import sleep
 #
 
 class Shred:
-	def __init__(self, image, samples, search_depth=3, black_threshold=3):
+	def __init__(self, image, samples, search_depth=3, black_threshold=3, max_search_depth=20):
 		
 		# Initialize members
 		self.image = image
@@ -19,6 +19,7 @@ class Shred:
 		self._right_sample = []
 		self._search_depth = search_depth	# How many pixels should we look into the sample?
 		self._black_threshold = black_threshold	# How many of them need to be black for it to be counted as black?
+		self._max_search_depth = max_search_depth
 
 		self._calculate_samples()
 
@@ -45,7 +46,7 @@ class Shred:
 			while pixel[x, y][1] > SATURATION_THRESHOLD:
 				x += 1
 				# Just in case
-				if x > hsv_image.width / 2:
+				if x > self._max_search_depth:
 					break
 			# Look a few pixels in and check for a blackish one
 			blacks = 0
@@ -61,7 +62,7 @@ class Shred:
 			while pixel[x, y][1] > SATURATION_THRESHOLD:
 				x -= 1
 				# Just in case
-				if x < hsv_image.width / 2:
+				if x < hsv_image.width-self._max_search_depth:
 					break
 			# Look a few pixels in and check for a blackish one
 			blacks = 0
@@ -82,6 +83,10 @@ class Shred:
 				if left and right:
 					matches += 1
 		
+		if checks == 0:
+			return 0
+
+		print(matches, checks)
 		confidence = matches / checks
 		logging.debug(f"Confidence: {round(confidence, 2)}")
 		return confidence
