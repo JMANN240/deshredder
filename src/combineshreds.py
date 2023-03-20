@@ -41,8 +41,8 @@ if __name__ == '__main__':
 
 	# Get all shreds (adjust as necessary)
 	shreds = []
-	for i in range(8):
-		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_example_8_shreds.png"), 600, search_depth=3, black_threshold=3))
+	for i in range(20):
+		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_generated_shreds.png"), 2000, search_depth=1, black_threshold=1))
 
 	documents = []
 	while len(shreds) > 0:

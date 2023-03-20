@@ -78,10 +78,9 @@ class Shred:
 		checks = 0
 
 		for right, left in zip(self._right_sample, other_shred._left_sample):
-			if left or right:
-				checks += 1
-				if left and right:
-					matches += 1
+			checks += 1
+			if left == right:
+				matches += 1
 		
 		if checks == 0:
 			return 0

@@ -27,9 +27,9 @@ def step_2(image, convolution):
         shred.save(f"intermediaries/shred_{i}.png")
     contour_rotations = [util.get_contour_rotations(contour, []) for contour in contours]
     logging.debug("Got contour rotations")
-    rotated_shreds = [shred.rotate(contour_rotation, fillcolor=(255,0,0)) for shred, contour_rotation in zip(shreds, contour_rotations)]
+    rotated_shreds = [shred.rotate(contour_rotation, fillcolor=(255,0,0), expand=True) for shred, contour_rotation in zip(shreds, contour_rotations)]
     logging.debug("Rotated shreds")
-    rotated_convolution_shreds = [contour.shred_image().rotate(contour_rotation) for contour, contour_rotation in zip(contours, contour_rotations)]
+    rotated_convolution_shreds = [contour.shred_image().rotate(contour_rotation, expand=True) for contour, contour_rotation in zip(contours, contour_rotations)]
     logging.debug("Rotated convolution shreds")
     rotated_convolution_shred_contours = [Contour(rotated_convolution_shred) for rotated_convolution_shred in rotated_convolution_shreds]
     logging.debug("Created rotated shred contours")
