@@ -78,9 +78,10 @@ class Shred:
 		checks = 0
 
 		for right, left in zip(self._right_sample, other_shred._left_sample):
-			checks += 1
-			if left == right:
-				matches += 1
+			if left or right:
+				checks += 1
+				if left and right:
+					matches += 1
 		
 		if checks == 0:
 			return 0
@@ -113,3 +114,9 @@ class Shred:
 
 	def attach_right_of(self, other_shred):
 		return other_shred.attach_left_of(self)
+
+	def is_right_edge(self):
+		return all([not sample for sample in self._right_sample])
+
+	def is_left_edge(self):
+		return all([not sample for sample in self._left_sample])

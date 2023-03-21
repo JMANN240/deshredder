@@ -1,7 +1,7 @@
 from random import uniform, shuffle
 from PIL import Image, ImageDraw, ImageFont
 
-scale = 400
+scale = 200
 
 number_of_shreds = 20
 

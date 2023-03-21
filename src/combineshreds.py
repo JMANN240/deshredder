@@ -5,37 +5,45 @@ from PIL import Image
 # Run tests
 #
 
-def find_match(shreds, confidence_threshold = 0.2):
+# Combine the leftmost shred with it's right neighbor
+# Return True if a match was found, False otherwise
+def find_match_right(shreds):
 	shred = shreds[0]
+	if shred.is_right_edge():
+		return False
 	best_match_confidence = 0
-	best_match_side = None
 	best_match_index = None
 	for i, test_shred in enumerate(shreds[1:]):
 		i += 1
 		left_confidence = shred.aligns_left_of(test_shred)
-		print(f"\t{left_confidence}")
-		if left_confidence > confidence_threshold and left_confidence > best_match_confidence:
+		if left_confidence > best_match_confidence:
 			best_match_confidence = left_confidence
-			best_match_side = 'L'
 			best_match_index = i
-		right_confidence = shred.aligns_right_of(test_shred)
-		print(f"\t{right_confidence}")
-		if right_confidence > confidence_threshold and right_confidence > best_match_confidence:
-			best_match_confidence = right_confidence
-			best_match_side = 'R'
-			best_match_index = i
-	print(best_match_confidence)
-	if best_match_index is None:
-		shreds.remove(shred)
-		return shred
-	if best_match_side == 'L':
-		new_shred = shred.attach_left_of(shreds[best_match_index])
-	elif best_match_side == 'R':
-		new_shred = shred.attach_right_of(shreds[best_match_index])
+	new_shred = shred.attach_left_of(shreds[best_match_index])
 	shreds.remove(shreds[best_match_index])
 	shreds.remove(shred)
 	shreds.insert(0, new_shred)
-	return None
+	return True
+
+# Combine the leftmost shred with it's left neighbor
+# Return True if a match was found, False otherwise
+def find_match_left(shreds):
+	shred = shreds[0]
+	if shred.is_left_edge():
+		return False
+	best_match_confidence = 0
+	best_match_index = None
+	for i, test_shred in enumerate(shreds[1:]):
+		i += 1
+		right_confidence = shred.aligns_right_of(test_shred)
+		if right_confidence > best_match_confidence:
+			best_match_confidence = right_confidence
+			best_match_index = i
+	new_shred = shred.attach_right_of(shreds[best_match_index])
+	shreds.remove(shreds[best_match_index])
+	shreds.remove(shred)
+	shreds.insert(0, new_shred)
+	return True
 
 if __name__ == '__main__':
 
@@ -44,11 +52,10 @@ if __name__ == '__main__':
 	for i in range(20):
 		shreds.append(Shred(Image.open(f"intermediaries/shred_{i}_generated_shreds.png"), 2000, search_depth=1, black_threshold=1))
 
-	documents = []
-	while len(shreds) > 0:
-		new_document = find_match(shreds)
-		if new_document is not None:
-			documents.append(new_document)
+	while find_match_right(shreds):
+		pass
+	while len(shreds) > 1:
+		find_match_left(shreds)
 
-	for index, document in enumerate(documents):
+	for index, document in enumerate(shreds):
 		document.image.save(f"outputs/document{index}.png")
