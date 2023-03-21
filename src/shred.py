@@ -115,8 +115,8 @@ class Shred:
 	def attach_right_of(self, other_shred):
 		return other_shred.attach_left_of(self)
 
-	def is_right_edge(self):
+	def is_right_edge(self): # Right side all white?
 		return all([not sample for sample in self._right_sample])
 
-	def is_left_edge(self):
+	def is_left_edge(self): # Left side all white?
 		return all([not sample for sample in self._left_sample])
